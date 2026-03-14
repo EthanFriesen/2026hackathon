@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script type="module" src="./src/main.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>fleet-management-app</title>
+  </head>
+  <body>
+
+    <div id="user-popup" class="user-popup"></div>
+
+    <div class="header">
+      <h1>FLEET MANAGEMENT APP</h1>
+    </div>
+
+    <div class="content">
+      <div>
+        <div class="user-card">
+          <div class="card-title">
+            <h2>Users</h2>
+          </div>
+          <div class="user-modal">
+          </div>
+          <div class="buttons-section">
+            <button id="add-user-btn" onclick="displayUserPopup()" class="add-user-btn">Add User</button>
+          </div>
+        </div>
+
+        <div class="devices-card">
+          <div class="card-title">
+            <h2>Devices</h2>
+        </div>
+          <div class="device-modal"></div>
+          <div class="buttons-section">
+            <button class="add-device-btn">Add Device</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </body>
+</html>

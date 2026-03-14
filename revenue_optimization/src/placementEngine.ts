@@ -35,6 +35,7 @@ export class PlacementEngine {
     }
 
     getTotalScheduledTimeForArea(areaSchedule: ScheduledAd[]): number {
+
         return 0;
     }
 
@@ -43,10 +44,13 @@ export class PlacementEngine {
         area: Area,
         startTime: number
     ): boolean {
+
+
         return false;
     }
 
     isAdAlreadyScheduled(adId: string, schedule: Schedule): boolean {
+
         return false;
     }
 
@@ -56,10 +60,14 @@ export class PlacementEngine {
         schedule: Schedule,
         startTime: number
     ): boolean {
+
         return false;
     }
 
     isAreaScheduleValid(area: Area, areaSchedule: ScheduledAd[], ads: Ad[]): boolean {
+
+        
+
         return false;
     }
 }

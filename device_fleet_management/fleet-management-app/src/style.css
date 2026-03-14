@@ -1,0 +1,109 @@
+:root {
+  --primary-color: #b122c7;
+  --secondary-color: #3e235c;
+  --background-color: #3e3e3e;
+  --text-color: #fff;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+  font-family: 'Arial', sans-serif;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background-color: var(--secondary-color);
+  padding: 20px;
+  z-index: 1000;
+}
+
+.user-card {
+  background-color: var(--primary-color);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px;
+  color: var(--text-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.devices-card {
+  background-color: var(--primary-color);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px;
+  color: var(--text-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-title {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.buttons-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.user-modal, .device-modal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.user-popup, .device-popup {
+  background-color: var(--secondary-color);
+  border-radius: 10px;
+  padding: 20px;
+  color: var(--text-color);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: none;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  position: fixed;
+  padding: 40px;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+}
+
+.close-btn {
+  background-color: transparent;
+  color: var(--text-color);
+  border: none;
+  font-size: 1.5em;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+}
