@@ -71,6 +71,16 @@ export class TeamSizer {
     }
 
     // ── Your implementation below ─────────────────────────────────────────────
+    createBoxMap(boxes: Box[]): Map<string, Box> {
+        const boxMap = new Map<string, Box>();
+
+        boxes.forEach((box: Box, index: number) => {
+            if (box !== null) {
+                boxMap.set(box.id, box);
+            }
+        });
+        return boxMap;
+    }
 
     calculateAssignmentDuration(
         startLocation: Location,
@@ -78,8 +88,41 @@ export class TeamSizer {
         boxes: Box[],
         routeIds: string[]
     ): number | null {
-        // TODO: implement this method
-        throw new Error('Not implemented');
+
+        const boxMap = this.createBoxMap(boxes);
+
+        let totalDistance: number = 0;
+        let curLoc: Location | undefined = startLocation;
+        let totalDuration: number = 0;
+        let foundUndefined: boolean = false;
+        
+        routeIds.forEach((routeId: string, index: number) => {
+
+            let nextLoc: Location | undefined = boxMap.get(routeId)?.location;
+
+            if (nextLoc === undefined) {
+                foundUndefined = true;
+            }
+
+            if (nextLoc !== undefined && curLoc !== undefined) {
+                totalDistance += this.haversineDistance(curLoc, nextLoc);
+                totalDuration += this.travelTimeMinutes(curLoc, nextLoc, speedKmh);
+            }
+
+            curLoc = nextLoc;
+
+            let duration: number | undefined =  boxMap.get(routeId)?.fixTimeMinutes
+
+            if (duration !== undefined) {
+                totalDuration += duration
+            }
+            
+        });
+        if (foundUndefined) {
+            return null;
+        }
+        return totalDuration;
+
     }
 
     tryAssign(

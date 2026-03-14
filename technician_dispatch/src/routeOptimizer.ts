@@ -62,17 +62,96 @@ export class RouteOptimizer {
 
     // ── Your implementation below ─────────────────────────────────────────────
 
+    createBoxMap(boxes: Box[]): Map<string, Box> {
+        const boxMap = new Map<string, Box>();
+
+        boxes.forEach((box: Box, index: number) => {
+            if (box !== null) {
+                boxMap.set(box.id, box);
+            }
+        });
+        return boxMap;
+    }
+
     calculateRouteDistance(
         technician: Technician,
         boxes: Box[],
         routeIds: string[]
     ): number | null {
-        // TODO: implement this method
-        throw new Error('Not implemented');
+
+        const boxMap = this.createBoxMap(boxes);
+
+        let totalDistance: number = 0;
+        let curLoc: Location | undefined = technician.startLocation;
+        let foundUndefined: boolean = false;
+        
+        routeIds.forEach((routeId: string, index: number) => {
+
+            let nextLoc: Location | undefined = boxMap.get(routeId)?.location;
+
+            if (nextLoc === undefined) {
+                foundUndefined = true;
+            }
+
+            if (nextLoc !== undefined && curLoc !== undefined) {
+                totalDistance += this.haversineDistance(curLoc, nextLoc);
+            }
+
+            curLoc = nextLoc;
+        });
+        if (foundUndefined) {
+            return null;
+        }
+        return totalDistance;
+    }
+
+    calculateShortestDistance(curLoc: Location, boxes: Box[]) {
+        let minDis: number | null = null;
+        let boxIn = 0;
+
+        boxes.forEach((box: Box, index: number) => {
+            let otherLoc: Location | undefined = box.location;
+
+            if (otherLoc !== undefined && curLoc !== null) {
+                let curDis: number = this.haversineDistance(curLoc, otherLoc);
+                if (minDis === null || curDis < minDis) {
+                    minDis = curDis;
+                    boxIn = index;
+                }
+            }
+        });
+        return boxIn;
     }
 
     findShortestRoute(technician: Technician, boxes: Box[]): RouteResult {
-        // TODO: implement this method
-        throw new Error('Not implemented');
+
+        let routeIds: string[] = [];
+
+        let curLoc = technician.startLocation;
+
+        let boxesCopy = [...boxes];      
+
+        while (boxesCopy.length > 0) {
+            let boxIn = this.calculateShortestDistance(curLoc, boxesCopy);
+
+            let bestBox = boxesCopy[boxIn];
+
+            routeIds.push(bestBox.id);
+
+            curLoc = bestBox.location;
+
+            boxesCopy.splice(boxIn, 1);
+        }
+
+        let distance: number | null = this.calculateRouteDistance(technician, boxes, routeIds);
+
+        if (distance === null) { distance = 0; }
+
+        let result: RouteResult = {
+            technicianId: technician.id,
+            route: routeIds,
+            totalDistanceKm: distance
+        }
+        return result;
     }
 }

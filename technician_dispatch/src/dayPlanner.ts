@@ -78,18 +78,125 @@ export class DayPlanner {
     }
 
     // ── Your implementation below ─────────────────────────────────────────────
+    createBoxMap(boxes: Box[]): Map<string, Box> {
+        const boxMap = new Map<string, Box>();
+
+        boxes.forEach((box: Box, index: number) => {
+            if (box !== null) {
+                boxMap.set(box.id, box);
+            }
+        });
+        return boxMap;
+    }
 
     calculateRouteDuration(
         technician: Technician,
         boxes: Box[],
         routeIds: string[]
     ): number | null {
-        // TODO: implement this method
-        throw new Error('Not implemented');
+
+        const boxMap = this.createBoxMap(boxes);
+
+        let totalDistance: number = 0;
+        let curLoc: Location | undefined = technician.startLocation;
+        let totalDuration: number = 0;
+        let foundUndefined: boolean = false;
+        
+        routeIds.forEach((routeId: string, index: number) => {
+
+            let nextLoc: Location | undefined = boxMap.get(routeId)?.location;
+
+            if (nextLoc === undefined) {
+                foundUndefined = true;
+            }
+
+            if (nextLoc !== undefined && curLoc !== undefined) {
+                totalDistance += this.haversineDistance(curLoc, nextLoc);
+                totalDuration += this.travelTimeMinutes(curLoc, nextLoc, technician.speedKmh);
+            }
+
+            curLoc = nextLoc;
+
+            let duration: number | undefined =  boxMap.get(routeId)?.fixTimeMinutes
+
+            if (duration !== undefined) {
+                totalDuration += duration
+            }
+            
+        });
+        if (foundUndefined) {
+            return null;
+        }
+        return totalDuration;
+    }
+
+    calculateShortesDuration(curLoc: Location, boxes: Box[], remainingMinutes: number, speedKmh: number) {
+        let minTime: number | null = null;
+        let boxIn = null;
+
+
+        boxes.forEach((box: Box, index: number) => {
+            let otherLoc: Location | undefined = box.location;
+
+            if (otherLoc !== undefined && curLoc !== null) {
+                let curDis: number = this.haversineDistance(curLoc, otherLoc);
+                let curMinutes: number = this.travelTimeMinutes(curLoc, otherLoc, speedKmh) + box.fixTimeMinutes
+                if ((minTime === null || curMinutes < minTime) && curMinutes <= remainingMinutes) {
+                    minTime = curMinutes;
+                    boxIn = index;
+                }
+            }
+        });
+        return {boxIn, minTime};
     }
 
     planDay(technician: Technician, boxes: Box[]): DayPlanResult {
-        // TODO: implement this method
-        throw new Error('Not implemented');
+        let routeIds: string[] = [];
+
+        let curLoc = technician.startLocation;
+
+        let boxesCopy = [...boxes];      
+        let remainingMinutes = technician.workingMinutes;
+        let noMoreBoxes = false;
+
+        while (boxesCopy.length > 0 && !noMoreBoxes) {
+            let {boxIn, minTime} = this.calculateShortesDuration(curLoc, boxesCopy, remainingMinutes, technician.speedKmh);
+            remainingMinutes -= minTime || 0;
+
+            if (boxIn !== null) {
+            
+                let bestBox = boxesCopy[boxIn];
+
+                routeIds.push(bestBox.id);
+
+                curLoc = bestBox.location;
+
+                boxesCopy.splice(boxIn, 1);
+            }
+            else {
+                noMoreBoxes = true;
+            }
+        }
+
+        let time: number | null = this.calculateRouteDuration(technician, boxes, routeIds);
+
+        if (time === null) { time = 0; }
+
+        let skipped: string[] = []
+
+        boxesCopy.forEach((box: Box, index: number) => {
+            skipped.push(box.id);
+        })
+
+        let result: DayPlanResult = {
+            technicianId: technician.id,
+            plannedRoute: routeIds,
+            totalTimeUsedMinutes: technician.workingMinutes - remainingMinutes,
+            boxesFixed: routeIds.length,
+            skippedBoxIds: skipped
+        }
+        return result;
     }
+
+
 }
